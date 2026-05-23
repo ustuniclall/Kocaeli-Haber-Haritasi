@@ -22,10 +22,6 @@ Yerel haber sitelerinden web scraping (veri kazıma) yöntemleriyle güncel olay
 6. **API Önbellekleme (Caching):** API maliyetlerini düşürmek için önceden sorgulanan konumlar yerel sözlük yapısında saklanır.
 
 
-| Filtreleme Paneli | Harita Üzerinde İşaretçi (Marker) |
-| :---: | :---: |
-| <img src="filtre_paneli.png" width="280"> | <img src="harita_marker.png" width="400"> |
-
 ## 📊 Örnek Veritabanı Kayıt Yapısı (MongoDB)
 ```json
 {
@@ -38,7 +34,13 @@ Yerel haber sitelerinden web scraping (veri kazıma) yöntemleriyle güncel olay
   "yayin_tarihi": "25-03-2026 00:08",
   "koordinat": { "lat": 40.716, "lng": 29.818 }
 }
-## 👥 Geliştiriciler
-**Merve Kübra ÖZTÜRK**
 
-**İclal ÜSTÜN**
+## 👥 Geliştiriciler
+* **Merve Kübra ÖZTÜRK**
+* **İclal ÜSTÜN**
+
+## 📸 Ekran Görüntüleri
+
+![Filtre Paneli](filtre_paneli.png) ![Harita Marker](harita_marker.png)
+![Olay Turu](olay_turu.png) ![Zaman Dilimi](zaman_dilimi.png)
+![Ilce Secimi ](ilce_secimi.png)![Harita Ekrani](harita_ekrani.png)
