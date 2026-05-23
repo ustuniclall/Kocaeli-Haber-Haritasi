@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kocaeli Haber Haritası</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js"></script>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        .sidebar-panel {
+            background: #34495e;
+            color: white;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .news-card {
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .news-card:hover {
+            transform: translateX(5px);
+            background: #f8f9fa;
+        }
+
+        .visited-card {
+            background: #2c3e50;
+            color: #bdc3c7;
+            font-size: 0.85rem;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #1abc9c;
+            border-bottom: 1px solid #1abc9c;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        .gm-style-iw {
+            color: #333 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <div class="col-md-3 sidebar-panel">
+                <h4 class="mb-4 text-center border-bottom pb-2">Kocaeli Haber Haritası</h4>
+
+                <div class="filter-section">
+                    <label class="small fw-bold mb-2 d-block">ZAMAN DİLİMİ</label>
+                    <select id="date-select" class="form-select form-select-sm bg-dark text-white border-0 mb-3">
+                        <option value="all">Son 3 Gün (Hepsi)</option>
+                        <option value="0">Bugün</option>
+                        <option value="1">Dün</option>
+                        <option value="2">Evvelsi Gün</option>
+                    </select>
+
+                    <label class="small fw-bold mb-2 d-block">İLÇE SEÇİMİ</label>
+                    <select id="district-filter" class="form-select form-select-sm bg-dark text-white border-0 mb-3">
+                        <option value="Hepsi">Tüm İlçeler</option>
+                        <option value="İzmit">İzmit</option>
+                        <option value="Gebze">Gebze</option>
+                        <option value="Gölcük">Gölcük</option>
+                        <option value="Körfez">Körfez</option>
+                        <option value="Derince">Derince</option>
+                        <option value="Kartepe">Kartepe</option>
+                        <option value="Darıca">Darıca</option>
+                        <option value="Kandıra">Kandıra</option>
+                        <option value="Karamürsel">Karamürsel</option>
+                        <option value="Başiskele">Başiskele</option>
+                        <option value="Dilovası">Dilovası</option>
+                        <option value="Çayırova">Çayırova</option>
+                    </select>
+
+                    <label class="small fw-bold mb-2 d-block">OLAY TÜRÜ</label>
+                    <select id="type-filter" class="form-select form-select-sm bg-dark text-white border-0 mb-3">
+                        <option value="Hepsi">Tüm Olaylar</option>
+                        <option value="Yangın">🔥 Yangın</option>
+                        <option value="Cinayet & Saldırı">🔪 Cinayet & Saldırı</option>
+                        <option value="Trafik Kazası">🚗 Trafik Kazası</option>
+                        <option value="Asayiş & Operasyon">🚔 Asayiş & Operasyon</option>
+                        <option value="Hırsızlık & Dolandırıcılık">💰 Hırsızlık & Dolandırıcılık</option>
+                        <option value="Spor">⚽ Spor</option>
+                        <option value="Elektrik Kesintisi">⚡ Elektrik Kesintisi</option>
+                        <option value="Kültürel Etkinlikler">🎵 Kültürel Etkinlikler</option>
+                    </select>
+
+                    <button class="btn btn-primary w-100 fw-bold mt-2" onclick="applyFilters()">FİLTRELE</button>
+                    <button id="refresh-btn" class="btn btn-outline-warning w-100 fw-bold mt-2"
+                        onclick="startFullRefresh()">
+                        <i class="fas fa-sync-alt"></i> SİTELERİ TARA VE GÜNCELLE
+                    </button>
+                    <div id="log-container" class="mt-3 p-2 small border rounded bg-dark text-success"
+                        style="height: 100px; overflow-y: auto; display: none; font-family: monospace;">
+                        <div id="log-content"></div>
+                    </div>
+                </div>
+
+                <div class="section-title">SON HABERLER</div>
+                <div id="news-list"></div>
+
+                <div class="section-title">SON ZİYARET EDİLENLER</div>
+                <div id="visited-list"></div>
+            </div>
+
+            <div class="col-md-9">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDodj5Vi0vvITGNex0SUPs6mivNdgmtO4w&callback=initMap&v=weekly&loading=async"
+        async defer></script>
+
+    <script>
+        let map;
+        let allNews = [];
+        let currentMarkers = [];
+        let oms;
+        let logInterval;
+
+        const emojiMapping = {
+            "Yangın": "🔥",
+            "Cinayet & Saldırı": "🔪",
+            "Trafik Kazası": "🚗",
+            "Asayiş & Operasyon": "🚔",
+            "Hırsızlık & Dolandırıcılık": "💰",
+            "Spor": "⚽",
+            "Elektrik Kesintisi": "⚡",
+            "Kültürel Etkinlikler": "🎵"
+        };
+
+        async function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 40.7654, lng: 29.9408 },
+                zoom: 11,
+                mapId: "DEMO_MAP_ID"
+            });
+
+            oms = new OverlappingMarkerSpiderfier(map, {
+                markersWontMove: true,
+                markersWontHide: true,
+                basicFormatEvents: true,
+                legColors: { usual: '#555555', highlighted: '#1abc9c' }
+            });
+
+            await loadNews();
+            renderVisited();
+        }
+
+        async function loadNews() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/haberler?t=${new Date().getTime()}');
+                allNews = await response.json();
+                applyFilters();
+            } catch (err) {
+                console.error("Veri çekme hatası:", err);
+            }
+        }
+
+        async function startFullRefresh() {
+            const btn = document.getElementById('refresh-btn');
+            const logContainer = document.getElementById('log-container');
+            const logContent = document.getElementById('log-content');
+
+            // Görsel hazırlık
+            logContainer.style.display = 'block';
+            logContent.innerHTML = "Sistem hazırlanıyor...";
+            btn.disabled = true;
+
+            // Döngü başlamadan önce başlangıç zamanını AL
+            let startTime = Date.now();
+
+            try {
+                // 1. Scraper'ı tetikle
+                await fetch('http://127.0.0.1:5000/api/tara');
+
+                // 2. Her 2 saniyede bir logları kontrol et
+                logInterval = setInterval(async () => {
+                    try {
+                        // Backend'den logları çek (Cache engellemek için timestamp ile)
+                        const res = await fetch(`http://127.0.0.1:5000/api/logs?t=${Date.now()}`);
+                        const logs = await res.json();
+
+                        if (logs && logs.length > 2) {
+                            // Logları ekrana yazdır
+                            logContent.innerHTML = logs.join('<br>');
+                            logContainer.scrollTop = logContainer.scrollHeight;
+
+                            // Tüm logları tek bir metin yap (Arama kolaylığı için)
+                            const allLogsText = logs.join(" ");
+
+                            // Yeni haber tespiti (Her yeni haberde haritayı güncelle)
+                            if (allLogsText.includes("✅ YENİ")) {
+                                await loadNews();
+                            }
+
+                            // --- DURDURMA MANTIĞI ---
+                            const isFinished = allLogsText.includes("✅ Tarama Bitti");
+                            const timePassed = (Date.now() - startTime) > 20000; // En az 20 saniye geçmiş olmalı
+
+                            if (isFinished && timePassed) {
+                                console.log("Tarama bitti, döngü sonlandırılıyor.");
+                                clearInterval(logInterval); // <--- DÖNGÜYÜ DURDURUR
+
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-check"></i> GÜNCELLEME TAMAM';
+
+                                await loadNews(); // Son verileri çek
+
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> SİTELERİ TARA VE GÜNCELLE';
+                                    logContainer.style.display = 'none';
+                                }, 5000);
+                            }
+                        }
+                    } catch (logErr) {
+                        // Sunucu kapalıysa veya hata varsa döngüyü durdur (ERR_CONNECTION_REFUSED hatasını keser)
+                        console.log("Sunucuya ulaşılamıyor, tarama bitmiş olabilir.");
+                    }
+                }, 2000);
+
+            } catch (err) {
+                alert("Bağlantı hatası: Sunucunun açık olduğundan emin olun.");
+                btn.disabled = false;
+            }
+        }
+
+        function applyFilters() {
+            const selectedType = document.getElementById('type-filter').value;
+            const selectedDistrict = document.getElementById('district-filter').value;
+            const dateValue = document.getElementById('date-select').value;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const filtered = allNews.filter(news => {
+
+                const typeMatch = (selectedType === "Hepsi" || news.haber_turu === selectedType);
+                const districtMatch = (selectedDistrict === "Hepsi" || news.konum_metin.includes(selectedDistrict));
+
+                let dateMatch = false;
+
+                const [datePart, timePart] = news.yayin_tarihi.split(' ');
+                const [gun, ay, yil] = datePart.split('-').map(Number);
+
+                // 🔥 DÜZELTME BURADA
+                let saat = 0;
+                let dakika = 0;
+
+                if (timePart && timePart.includes(":")) {
+                    [saat, dakika] = timePart.split(':').map(Number);
+                }
+
+                const haberDate = new Date(yil, ay - 1, gun, 0, 0);
+                const haberGunu = new Date(yil, ay - 1, gun, 0, 0, 0, 0);
+
+                const zamanFarki = today.getTime() - haberGunu.getTime();
+                const gunFarki = Math.round(zamanFarki / (1000 * 60 * 60 * 24));
+
+                if (dateValue === "all") {
+                    dateMatch = (gunFarki >= 0 && gunFarki <= 2);
+                } else {
+                    dateMatch = (gunFarki === parseInt(dateValue));
+                }
+
+                return typeMatch && districtMatch && dateMatch;
+            });
+
+            renderMarkers(filtered);
+            renderList(filtered);
+        }
+
+        function renderMarkers(newsData) {
+            // Mevcut markerları temizle
+            currentMarkers.forEach(m => m.setMap(null));
+            currentMarkers = [];
+            oms.removeAllMarkers(); // Spiderfier'ı temizle
+
+            newsData.forEach(news => {
+                const emoji = emojiMapping[news.haber_turu];
+                if (!emoji) return;
+
+                const marker = new google.maps.Marker({
+                    position: { lat: news.koordinat.lat, lng: news.koordinat.lng },
+                    map: map,
+                    title: news.haber_basligi,
+                    icon: {
+                        url: createEmojiMarker(emoji),
+                        anchor: new google.maps.Point(20, 20),
+                        scaledSize: new google.maps.Size(40, 40)
+                    },
+                    optimized: false
+                });
+
+                const info = new google.maps.InfoWindow({
+                    content: `
+                        <div style="padding:10px; min-width:200px;">
+                            <h6 style="font-weight:bold; color:#2c3e50; font-size:14px;">${news.haber_basligi}</h6>
+                            <p style="font-size:12px; color:#e74c3c; margin-bottom:5px;">
+                                <b>📍 Konum:</b> ${news.konum_metin}
+                            </p>
+                            <p style="font-size:11px; color:#7f8c8d;">
+                                <b>📅 Tarih:</b> ${news.yayin_tarihi}
+                                <b>🏢 Kaynak:</b> ${Array.isArray(news.kaynak_adi) ? news.kaynak_adi.join(", ") : news.kaynak_adi}
+                            </p>
+                            <a href="${news.link}" target="_blank" onclick="trackVisit('${news.haber_basligi.replace(/'/g, "\\'")}')" class="btn btn-primary btn-sm w-100 mt-2" style="font-size:11px; color:white;">Haberi Oku</a>                        
+                        </div>`
+                });
+
+                oms.addMarker(marker);
+                marker.addListener('spider_click', () => {
+                    info.open(map, marker);
+                });
+
+                currentMarkers.push(marker);
+            });
+        }
+
+
+
+        function createEmojiMarker(emoji) {
+            const canvas = document.createElement("canvas");
+            canvas.width = 40; canvas.height = 40;
+            const ctx = canvas.getContext("2d");
+            ctx.font = "30px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(emoji, 20, 20);
+            return canvas.toDataURL();
+        }
+        function renderList(newsData) {
+            const container = document.getElementById('news-list');
+            container.innerHTML = newsData.length === 0 ? '<p class="small text-muted">Filtrelere uygun haber bulunamadı.</p>' : '';
+
+            newsData.sort((a, b) => b.tarih_obj - a.tarih_obj);
+
+            newsData.slice(0, 20).forEach(news => {
+                const emoji = emojiMapping[news.haber_turu];
+
+                const div = document.createElement('div');
+                div.className = 'news-card';
+
+                div.innerHTML = `
+                <div style="font-size:24px; margin-right:12px">${emoji}</div>
+                <div>
+                    <div class="fw-bold" style="font-size:13px">${news.haber_basligi.substring(0, 65)}...</div>
+                    <div class="text-muted" style="font-size:11px">${news.konum_metin}</div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <span class="text-info" style="font-size:10px; font-weight:bold">
+                            ${Array.isArray(news.kaynak_adi) ? news.kaynak_adi[0] : news.kaynak_adi}
+                        </span>
+                        <span class="text-muted" style="font-size:10px">
+                            ${news.yayin_tarihi} <!-- 🔥 SAAT ARTIK GÖRÜNÜR -->
+                        </span>
+                    </div>
+                </div>
+            `;
+
+                div.onclick = () => {
+                    map.setCenter({ lat: news.koordinat.lat, lng: news.koordinat.lng });
+                    map.setZoom(15);
+                    trackVisit(news.haber_basligi);
+                };
+
+                container.appendChild(div);
+            });
+        }
+
+        function trackVisit(title) {
+            let visited = JSON.parse(localStorage.getItem('visitedNews') || '[]');
+
+            // Eğer haber zaten listedeyse, onu listeden çıkarıp en başa alalım (güncellik için)
+            visited = visited.filter(item => item !== title);
+
+            // Haberi listenin başına ekle
+            visited.unshift(title);
+
+            // Sadece son 5 haberi tut [cite: 150]
+            if (visited.length > 5) visited.pop();
+
+            localStorage.setItem('visitedNews', JSON.stringify(visited));
+            renderVisited(); // Listeyi anlık güncelle
+        }
+
+        function renderVisited() {
+            const container = document.getElementById('visited-list');
+            const visited = JSON.parse(localStorage.getItem('visitedNews') || '[]');
+            container.innerHTML = visited.length === 0 ? '<p class="small text-muted">Ziyaret edilen haber yok.</p>' : '';
+            visited.forEach(title => {
+                const div = document.createElement('div');
+                div.className = 'visited-card';
+                div.innerText = title.substring(0, 45) + '...';
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+
+</html>
