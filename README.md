@@ -21,8 +21,6 @@ Yerel haber sitelerinden web scraping (veri kazıma) yöntemleriyle güncel olay
 5. **Coğrafi Konum Çıkarımı:** Metin hiyerarşik olarak (İlçe -> Mahalle -> Cadde/Sokak -> Önemli Kurumlar) analiz edilir. Elde edilen normalize adres, Google Maps API ile hassas koordinatlara (Enlem/Boylam) dönüştürülür.
 6. **API Önbellekleme (Caching):** API maliyetlerini düşürmek için önceden sorgulanan konumlar yerel sözlük yapısında saklanır.
 
-## 📸 Ekran Görüntüleri
-> *Aşağıdaki galeri alanına uygulamanın arayüz fotoğraflarını ekleyebilirsiniz.*
 
 | Filtreleme Paneli | Harita Üzerinde İşaretçi (Marker) |
 | :---: | :---: |
@@ -40,3 +38,7 @@ Yerel haber sitelerinden web scraping (veri kazıma) yöntemleriyle güncel olay
   "yayin_tarihi": "25-03-2026 00:08",
   "koordinat": { "lat": 40.716, "lng": 29.818 }
 }
+## 👥 Geliştiriciler
+**Merve Kübra ÖZTÜRK**
+
+**İclal ÜSTÜN**
