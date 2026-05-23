@@ -23,6 +23,7 @@ Yerel haber sitelerinden web scraping (veri kazıma) yöntemleriyle güncel olay
 
 
 ## 📊 Örnek Veritabanı Kayıt Yapısı (MongoDB)
+
 ```json
 {
   "_id": "ObjectId(...)",
@@ -30,17 +31,40 @@ Yerel haber sitelerinden web scraping (veri kazıma) yöntemleriyle güncel olay
   "haber_basligi": "Kütüphaneler Haftası'nda Gölcük'te öğrencilere tiyatro sürprizi",
   "konum_metin": "Gölcük",
   "kaynak_adi": ["Çağdaş Kocaeli"],
-  "link": "[https://www.cagdaskocaeli.com.tr/](https://www.cagdaskocaeli.com.tr/)...",
+  "link": "https://www.cagdaskocaeli.com.tr/...",
   "yayin_tarihi": "25-03-2026 00:08",
-  "koordinat": { "lat": 40.716, "lng": 29.818 }
+  "koordinat": {
+    "lat": 40.716,
+    "lng": 29.818
+  }
 }
+```
+
+---
 
 ## 👥 Geliştiriciler
-* **Merve Kübra ÖZTÜRK**
-* **İclal ÜSTÜN**
+
+- **Merve Kübra ÖZTÜRK**
+- **İclal ÜSTÜN**
+
+---
 
 ## 📸 Ekran Görüntüleri
 
-![Filtre Paneli](filtre_paneli.png) ![Harita Marker](harita_marker.png)
-![Olay Turu](olay_turu.png) ![Zaman Dilimi](zaman_dilimi.png)
-![Ilce Secimi ](ilce_secimi.png)![Harita Ekrani](harita_ekrani.png)
+### Filtre Paneli
+![Filtre Paneli](filtre_paneli.png)
+
+### Harita Marker
+![Harita Marker](harita_marker.png)
+
+### Olay Türü
+![Olay Turu](olay_turu.png)
+
+### Zaman Dilimi
+![Zaman Dilimi](zaman_dilimi.png)
+
+### İlçe Seçimi
+![Ilce Secimi](ilce_secimi.png)
+
+### Harita Ekranı
+![Harita Ekrani](harita_ekrani.png)
