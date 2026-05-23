@@ -1,0 +1,15 @@
+```text
+    # Güvenlik ve Gizlilik
+    .env
+    
+    # Günlük Dosyaları
+    *.log
+    scraper.log
+    
+    # Python Geçici Dosyaları
+    __pycache__/
+    *.pyc
+    
+    # MacOS Sistem Dosyaları
+    .DS_Store
+    __MACOSX/
